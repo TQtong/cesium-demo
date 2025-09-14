@@ -52,7 +52,7 @@ interface VitePluginCesiumOptions {
         outDir = c.build.outDir;
       }
       CESIUM_BASE_URL = path.posix.join(base, CESIUM_BASE_URL);
-      console.log('CESIUM_BASE_URL', CESIUM_BASE_URL);
+
       const userConfig: UserConfig = {};
       if (!isBuild) {
         // -----------dev-----------
