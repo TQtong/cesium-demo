@@ -19,18 +19,8 @@ export const init = (container: HTMLDivElement) => {
   return viewer
 }
 
-let imagerLayer: Cesium.WebMapTileServiceImageryProvider
-let vectorLayer: Cesium.UrlTemplateImageryProvider
-
-export const addImgerTianditu = (viewer: Cesium.Viewer) => { 
-
-  if (imagerLayer) {
-    viewer.imageryLayers._layers.pop()
-    console.log(viewer.imageryLayers._layers);
-    
-    return
-  }
-  imagerLayer = new Cesium.WebMapTileServiceImageryProvider({
+export const addImgerTianditu = (viewer: Cesium.Viewer) => {
+  const imagerLayer = new Cesium.WebMapTileServiceImageryProvider({
     url: 'http://{s}.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={TileMatrix}&TILEROW={TileRow}&TILECOL={TileCol}&tk=e91172d22894b1c004e47f81452ff4bb',
     layer: '',
     style: '',
@@ -38,19 +28,44 @@ export const addImgerTianditu = (viewer: Cesium.Viewer) => {
     subdomains: ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7'],
   })
 
-  viewer.imageryLayers.addImageryProvider(imagerLayer)  
+  viewer.imageryLayers.addImageryProvider(imagerLayer)
+
+  const length = viewer.imageryLayers.length
+  for (let i = 0; i < length; i++) {
+    const layer = viewer.imageryLayers.get(i)
+    const url = layer.imageryProvider.url
+
+    const isVectorLayer = url && url.indexOf('img_w') !== -1
+
+    if (isVectorLayer) {
+      // viewer.imageryLayers.remove(layer) // 删除
+      // viewer.imageryLayers.raise(layer) // 提升一级
+      viewer.imageryLayers.lower(layer) // 降低一级
+    }
+  }
 }
 
-export const addVectorTianditu = (viewer: Cesium.Viewer) => { 
-  if (vectorLayer) {
-    viewer.imageryLayers._layers.pop()
-  }
-  vectorLayer = new Cesium.UrlTemplateImageryProvider({
+export const addVectorTianditu = (viewer: Cesium.Viewer) => {
+  const vectorLayer = new Cesium.UrlTemplateImageryProvider({
     url: 'https://{s}.tianditu.gov.cn/DataServer?T=vec_w&X={x}&Y={y}&L={z}&tk=e91172d22894b1c004e47f81452ff4bb',
     subdomains: ['t0', 't1', 't2', 't3', 't4', 't5', 't6', 't7'],
   })
 
+  // vectorLayer.name = 'vectorLayer'
+
   viewer.imageryLayers.addImageryProvider(vectorLayer)
-  console.log(viewer.imageryLayers);
-  
+
+  const length = viewer.imageryLayers.length
+  for (let i = 0; i < length; i++) {
+    const layer = viewer.imageryLayers.get(i)
+    const url = layer.imageryProvider.url
+
+    const isVectorLayer = url && url.indexOf('vec_w') !== -1
+
+    if (isVectorLayer) {
+      // viewer.imageryLayers.remove(layer) // 删除
+      // viewer.imageryLayers.raise(layer) // 提升一级
+      viewer.imageryLayers.lower(layer) // 降低一级
+    }
+  }
 }
